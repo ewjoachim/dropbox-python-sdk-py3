@@ -1,3 +1,18 @@
+A note from the forker
+======================
+
+This repo is a fork of the official Python Dropbox SDK created to make it python 3 compatible, and provide the fix to the community. I will only fix the parts that are blocking me on my own project, but feel free to submit pull request if you find other part. If you're from Dropbox, of course, feel free to backport fixes frop this repo to the original dropbox repo.
+I'll try to keep the pypi version up to date with the various fixes proposed here, so that we can all simply pip install dropbox-py3 in our own py3 projects :)
+
+Note : for me, the test won't pass as-is, either for py27 or py34. I initially wanted to add a tox.ini to test both versions, but what I really want is for this to work in my project, I don't really have the time to also fix all the tests that did not originally pass. That said, if you do, feel free.
+
+Final note : Hey Dropbox, I really like what you do, but I don't get why you released the source of this with an MIT license and didn't do a Github repo as you do with other software you opensource. Thnik about it ...? Have a nice day (and keep being awesome !)
+
+Related stuff :
+
+ - https://pypi.python.org/pypi/dropbox
+ - https://twitter.com/smarx/status/600082229197479938
+
 Dropbox Core SDK for Python
 ===========================
 

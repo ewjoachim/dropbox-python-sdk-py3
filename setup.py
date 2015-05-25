@@ -36,7 +36,7 @@ with open('LICENSE') as f:
 with open('README.rst') as f:
   readme = f.read()
 
-setup(name='dropbox',
+setup(name='dropbox-py3',
       version='2.2.0',
       description='Official Dropbox REST API Client',
       long_description=readme,
