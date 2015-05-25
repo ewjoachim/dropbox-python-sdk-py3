@@ -8,7 +8,9 @@ I'll try to keep the pypi version up to date with the various fixes proposed her
 
 Note : for me, the test won't pass as-is, either for py27 or py34. I initially wanted to add a tox.ini to test both versions, but what I really want is for this to work in my project, I don't really have the time to also fix all the tests that did not originally pass. That said, if you do, feel free.
 
-Final note : Hey Dropbox, I really like what you do, but I don't get why you released the source of this with an MIT license and didn't do a Github repo as you do with other software you opensource. Thnik about it ...? Have a nice day (and keep being awesome !)
+Warning : I am NOT a Dropbox person and I am not affiliated with Dropbox. I don't claim any ownership to this code and all the modification are made according to the MIT license distibuted with the original Dropbox package. I'm not a licensing expert so I don't know the legal status of the modifications themselves in this fork but , as far as I understand, these modification being written under the MIT license let them be used back in the original project or in any other project if need be. Please contact me ( @ewjoachim ) if there's a problem with that, and keep all of that in mind if you add a merge request. Thanks.
+
+Final note : Hey Dropbox, I really like what you do, but I don't get why you released the source of this with an MIT license and didn't do a Github repo as you do with other software you opensource. Thnik about it ...? Have a nice day (and keep being awesome !). And if at some point you can merge this project or add the equivalent features in the original package, We'd all be thankful.
 
 Related stuff :
 
