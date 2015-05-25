@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/dropbox-py3.svg)](http://badge.fury.io/py/dropbox-py3)
+
 A note from the forker
 ======================
 
@@ -10,8 +12,9 @@ Final note : Hey Dropbox, I really like what you do, but I don't get why you rel
 
 Related stuff :
 
- - https://pypi.python.org/pypi/dropbox
- - https://twitter.com/smarx/status/600082229197479938
+ - Original : https://pypi.python.org/pypi/dropbox
+ - Fork : https://pypi.python.org/pypi/dropbox-py3
+ - Originating discussion : https://twitter.com/smarx/status/600082229197479938
 
 Dropbox Core SDK for Python
 ===========================
