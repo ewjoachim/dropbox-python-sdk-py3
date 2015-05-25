@@ -17,6 +17,7 @@ Related stuff :
  - Original : https://pypi.python.org/pypi/dropbox
  - Fork : https://pypi.python.org/pypi/dropbox-py3
  - Originating discussion : https://twitter.com/smarx/status/600082229197479938
+ - Discussion ad Dropbox's forum : https://www.dropboxforum.com/hc/communities/public/questions/203834025-A-Python-3-fork-of-the-Python-SDK
 
 Dropbox Core SDK for Python
 ===========================
