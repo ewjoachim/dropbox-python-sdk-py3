@@ -11,6 +11,7 @@ parent_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 INSTALL_REQUIRES = []
 INSTALL_REQUIRES.append('urllib3')  # This is a 3rd party connections lib for 2.6+
+INSTALL_REQUIRES.append('six')  # Python 2 and 3 compatibility
 assert sys.version_info >= (2, 6), "We only support Python 2.6+"
 
 extra = {}
@@ -33,7 +34,7 @@ else:
 with open('LICENSE') as f:
   license = f.read()
 
-with open('README.rst') as f:
+with open('README.md') as f:
   readme = f.read()
 
 setup(name='dropbox-py3',
