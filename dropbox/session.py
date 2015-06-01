@@ -7,15 +7,15 @@ A DropboxSession object must be passed to a dropbox.client.DropboxClient object 
 initialization.
 
 """
-from __future__ import absolute_import
+
 
 import random
 import sys
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 try:
-    from urlparse import parse_qs
+    from urllib.parse import parse_qs
 except ImportError:
     # fall back for Python 2.5
     from cgi import parse_qs
@@ -89,10 +89,10 @@ class BaseSession(object):
         Returns:
             - The path and parameters components of an API URL.
         """
-        if sys.version_info < (3,) and type(target) == unicode:
+        if sys.version_info < (3,) and type(target) == str:
             target = target.encode("utf8")
 
-        target_path = urllib.quote(target)
+        target_path = urllib.parse.quote(target)
 
         params = params or {}
         params = params.copy()
@@ -101,7 +101,7 @@ class BaseSession(object):
             params['locale'] = self.locale
 
         if params:
-            return "/%s%s?%s" % (self.API_VERSION, target_path, urllib.urlencode(params))
+            return "/%s%s?%s" % (self.API_VERSION, target_path, urllib.parse.urlencode(params))
         else:
             return "/%s%s" % (self.API_VERSION, target_path)
 

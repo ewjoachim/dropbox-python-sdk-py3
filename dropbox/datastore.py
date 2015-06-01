@@ -44,7 +44,7 @@ PY3 = sys.version_info[0] == 3
 # Polyfill a few things for Bytes().
 if PY3:  # pragma: no cover
     buffer = memoryview
-    basestring = str
+    str = str
     long = int
 else:
     bytearray = bytes
@@ -376,7 +376,7 @@ class DatastoreManager(object):
         if role is None:
             role = Datastore.OWNER  # Our best guess.
         else:
-            if not isinstance(role, basestring):
+            if not isinstance(role, str):
                 raise TypeError('Role must be a string: %r' % (role,))
             if role not in (Datastore.OWNER, Datastore.EDITOR, Datastore.VIEWER):
                 raise ValueError('invalid role (%r)' % (role,))
@@ -480,7 +480,7 @@ class DatastoreManager(object):
         if datastores is not None:
             cursors = {}
             if isinstance(datastores, collections.Mapping):
-                for ds, rev in datastores.items():
+                for ds, rev in list(datastores.items()):
                     cursors[ds._handle] = rev
             else:
                 for ds in datastores:
@@ -592,7 +592,7 @@ def _make_dsinfo(item):
 def _make_role(irole):
     if irole is None:
         return Datastore.OWNER  # Backward compatible default.
-    if not isinstance(irole, (int, long)):
+    if not isinstance(irole, int):
         raise TypeError('irole must be an integer: %r', irole)
     # Unknown roles are truncated down to the nearest known role.
     if irole >= ROLE_OWNER:
@@ -613,7 +613,7 @@ def _parse_role(role, owner_ok=False):
         return ROLE_VIEWER
     if role == Datastore.NONE:
         return ROLE_NONE
-    if not isinstance(role, basestring):
+    if not isinstance(role, str):
         raise TypeError('invalid role type: %r' % (role,))
     raise ValueError('invalid role: %r' % (role,))
 
@@ -660,7 +660,7 @@ class User(Principal):
     """
 
     def __init__(self, uid):
-        if not isinstance(uid, (int, long, basestring)):
+        if not isinstance(uid, (int, str)):
             raise TypeError('Invalid uid type: %r' % (uid,))
         if not str(uid).isdigit():
             raise ValueError('Invalid uid: %r' % (uid,))
@@ -926,7 +926,7 @@ class Datastore(object):
         table, you must call :meth:`commit()` to send this change to
         the server.
         """
-        if title is not None and not isinstance(title, basestring):
+        if title is not None and not isinstance(title, str):
             raise TypeError('Title must be a string, not %s' % type(title).__name__)
         self._set_info_field('title', title)
 
@@ -1106,7 +1106,7 @@ class Datastore(object):
         for row in snapshot:
             tid = row['tid']
             recordid = row['rowid']
-            data = dict((field, _value_from_json(v)) for field, v in row['data'].items())
+            data = dict((field, _value_from_json(v)) for field, v in list(row['data'].items()))
             table = self.get_table(tid)
             table._update_record_fields(recordid, data, _compute_record_size_for_fields(data))
         self._rev = rev
@@ -1126,10 +1126,10 @@ class Datastore(object):
         state using :meth:`apply_snapshot()`.
         """
         snapshot = []
-        for table_id, table in self._tables.items():
-            for record_id, fields in table._records.items():
+        for table_id, table in list(self._tables.items()):
+            for record_id, fields in list(table._records.items()):
                 data = {}
-                for field, value in fields.items():
+                for field, value in list(fields.items()):
                     data[field] = _value_to_json(value)
                 snapshot.append({'tid': table_id, 'rowid': record_id, 'data': data})
         return snapshot
@@ -1258,7 +1258,7 @@ class Datastore(object):
             A set of strings table IDs (strings).
         """
         tids = set()
-        for tid, table in self._tables.items():
+        for tid, table in list(self._tables.items()):
             if table._records:
                 tids.add(tid)
         return tids
@@ -1405,7 +1405,7 @@ class Datastore(object):
             fields = dict(table._records[recordid])
             undo = {}
             old_size, new_size = 0, 0
-            for field, val in data.items():
+            for field, val in list(data.items()):
                 old_value = fields.get(field)
                 undo[field] = old_value
                 if old_value is not None:
@@ -1537,7 +1537,7 @@ class Table(object):
     def _insert_with_id(self, recordid, fields):
         self._datastore._check_edit_permission()
         value_size = 0
-        for field, value in fields.items():
+        for field, value in list(fields.items()):
             if not Record.is_valid_field(field):
                 raise ValueError('Invalid field name %r' % (field,))
             if value is None:
@@ -1579,13 +1579,13 @@ class Table(object):
             to_do = urgent | normal
         """
         filter = []
-        for field, value in kwds.items():
+        for field, value in list(kwds.items()):
             if not Record.is_valid_field(field):
                 raise ValueError('Invalid field name %r' % (field,))
             value = _typecheck_value(value, field)
             filter.append((field, value))
         results = set()
-        for recordid, fields in self._records.items():
+        for recordid, fields in list(self._records.items()):
             for field, value in filter:
                 if field not in fields:
                     break
@@ -1596,7 +1596,7 @@ class Table(object):
                 # fails unless both types are numeric.
                 trfv = type(rfv)
                 tv = type(value)
-                if trfv is not tv and not set((trfv, tv)) <= set((int, long, float)):
+                if trfv is not tv and not set((trfv, tv)) <= set((int, int, float)):
                     break
             else:
                 results.add(Record(self, recordid))
@@ -1809,7 +1809,7 @@ class Record(object):
         data = {}
         undo = {}
         old_size, new_size = 0, 0
-        for field, value in kwds.items():
+        for field, value in list(kwds.items()):
             if not Record.is_valid_field(field):
                 raise ValueError('Invalid field name %r' % (field,))
             if value is None:
@@ -1934,7 +1934,7 @@ class Date(object):
         if timestamp is None:
             timestamp = time.time()
         else:
-            if not isinstance(timestamp, (float, int, long)):
+            if not isinstance(timestamp, (float, int)):
                 raise TypeError('Timestamp must be a float or integer, not %s' %
                                 type(timestamp).__name__)
         self._timestamp = int(timestamp*1000.0) / 1000.0
@@ -1951,7 +1951,7 @@ class Date(object):
         return int(self._timestamp)
 
     def __long__(self):
-        return long(self._timestamp)
+        return int(self._timestamp)
 
     def __eq__(self, other):
         if not isinstance(other, Date):
@@ -2030,7 +2030,7 @@ class Date(object):
         # If this assert fires the server sent us bad data.
         assert (isinstance(j, dict) and
                 list(j) == [TIMESTAMP] and
-                isinstance(j[TIMESTAMP], basestring)), repr(j)
+                isinstance(j[TIMESTAMP], str)), repr(j)
         timestamp = int(j[TIMESTAMP]) / 1000.0
         return cls(timestamp)
 
@@ -2137,7 +2137,7 @@ class Bytes(object):
         # If this assert fires the server sent us bad data.
         assert (isinstance(j, dict) and
                 list(j) == [BLOB] and
-                isinstance(j[BLOB], basestring)), repr(j)
+                isinstance(j[BLOB], str)), repr(j)
         b = _dbase64_decode(j[BLOB])
         return cls(b)
 
@@ -2337,7 +2337,7 @@ VALID_ATOM_TYPES = frozenset([
     Date,
     Bytes,
     List,
-    ] + ([bytes] if PY3 else [long, unicode]))
+    ] + ([bytes] if PY3 else [int, str]))
 
 
 def _typecheck_value(value, field):
@@ -2368,7 +2368,7 @@ def _typecheck_atom(value, field, is_list=False):
 
 def _compute_record_size_for_fields(fields):
     """Compute the size in bytes of a record containing the given fields."""
-    return Record.BASE_RECORD_SIZE + sum(map(_compute_field_size, fields.itervalues()))
+    return Record.BASE_RECORD_SIZE + sum(map(_compute_field_size, iter(fields.values())))
 
 
 def _compute_field_size(value):
@@ -2403,7 +2403,7 @@ def _compute_list_size(value):
 def _compute_atom_size(value):
     if value is None:
         return 0
-    if isinstance(value, (int, long, bool, float, Date)):
+    if isinstance(value, (int, bool, float, Date)):
         return 0
     if PY3:  # pragma: no cover
         if isinstance(value, str):
@@ -2411,7 +2411,7 @@ def _compute_atom_size(value):
         if isinstance(value, bytes):
             return len(value)
     else:
-        if isinstance(value, unicode):
+        if isinstance(value, str):
             value = value.encode('utf-8')
         if isinstance(value, str):
             return len(value)
@@ -2429,8 +2429,8 @@ class _Change(object):
 
     def __init__(self, op, tid, recordid, data=None, undo=None):
         assert op in (INSERT, UPDATE, DELETE), repr(op)
-        assert isinstance(tid, basestring), repr(tid)
-        assert isinstance(recordid, basestring), repr(recordid)
+        assert isinstance(tid, str), repr(tid)
+        assert isinstance(recordid, str), repr(recordid)
         if data is None:
             assert op == DELETE, repr(op)
         else:
@@ -2475,9 +2475,9 @@ class _Change(object):
         change_size = Datastore.BASE_CHANGE_SIZE
         if self.op == INSERT:
             change_size += sum((Record.BASE_FIELD_SIZE + _compute_value_size(val))
-                               for val in self.data.itervalues())
+                               for val in self.data.values())
         elif self.op == UPDATE:
-            for field_op in self.data.itervalues():
+            for field_op in self.data.values():
                 change_size += Record.BASE_FIELD_SIZE
                 op_value = _get_op_value(field_op)
                 if op_value is not None:
@@ -2488,7 +2488,7 @@ class _Change(object):
         if self.op == UPDATE:
             newdata = {}
             newundo = {}
-            for name, op in self.data.items():
+            for name, op in list(self.data.items()):
                 assert _is_op(op), repr((name, op))
                 if _is_listop(op):
                     newdata[name], newundo[name] = self._invert_listop(name, op)
@@ -2555,10 +2555,10 @@ class _Change(object):
         op, tid, recordid = val[:3]
         if op == INSERT:
             assert len(val) == 4, repr(val)
-            data = dict((field, _value_from_json(v)) for field, v in val[3].items())
+            data = dict((field, _value_from_json(v)) for field, v in list(val[3].items()))
         elif op == UPDATE:
             assert len(val) == 4, repr(val)
-            data = dict((field, _op_from_json(v)) for field, v in val[3].items())
+            data = dict((field, _op_from_json(v)) for field, v in list(val[3].items()))
         elif op == DELETE:
             assert len(val) == 3, repr(val)
             data = None
@@ -2570,12 +2570,12 @@ class _Change(object):
         # We never serialize the undo info.
         if self.op == INSERT:
             data = dict(self.data)
-            for k, v in data.items():
+            for k, v in list(data.items()):
                 data[k] = _value_to_json(v)
             return [self.op, self.tid, self.recordid, data]
         if self.op == UPDATE:
             data = {}
-            for k, v in self.data.items():
+            for k, v in list(self.data.items()):
                 assert _is_op(v), repr(v)
                 data[k] = _op_to_json(v)
             return [self.op, self.tid, self.recordid, data]
@@ -2615,7 +2615,7 @@ def _new_uuid():
 
 
 def _value_from_json(v):
-    if isinstance(v, (int, long)) and not isinstance(v, bool):
+    if isinstance(v, int) and not isinstance(v, bool):
         return float(v)  # Plain JSON "numbers" are only used to encode floats.
     if isinstance(v, dict):
         assert len(v) == 1, repr(v)
@@ -2641,7 +2641,7 @@ def _value_from_json(v):
 
 
 def _value_to_json(v):
-    if isinstance(v, (int, long)) and not isinstance(v, bool):
+    if isinstance(v, int) and not isinstance(v, bool):
         return {INTEGER: str(v)}
     if isinstance(v, float):
         if math.isinf(v):

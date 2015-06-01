@@ -1,18 +1,18 @@
-from __future__ import absolute_import
+
 
 import base64
 import re
 import os
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 PY3 = sys.version_info[0] == 3
 
 if PY3:
     from io import StringIO
-    basestring = str
+    str = str
 else:
-    from StringIO import StringIO
+    from io import StringIO
 
 try:
     import json
@@ -36,7 +36,7 @@ def format_path(path):
     path = re.sub(r'/+', '/', path)
 
     if path == '/':
-        return (u"" if isinstance(path, unicode) else "")
+        return ("" if isinstance(path, str) else "")
     else:
         return '/' + path.strip('/')
 
@@ -70,7 +70,7 @@ class DropboxClient(object):
             requests.
         """
         if rest_client is None: rest_client = RESTClient
-        if isinstance(oauth2_access_token, basestring):
+        if isinstance(oauth2_access_token, str):
             if not _OAUTH2_ACCESS_TOKEN_PATTERN.match(oauth2_access_token):
                 raise ValueError("invalid format for oauth2_access_token: %r"
                                  % (oauth2_access_token,))
@@ -473,7 +473,7 @@ class DropboxClient(object):
         # Parses file metadata from a raw dropbox HTTP response, raising a
         # dropbox.rest.ErrorResponse if parsing fails.
         metadata = None
-        for header, header_val in dropbox_raw_response.getheaders().iteritems():
+        for header, header_val in dropbox_raw_response.getheaders().items():
             if header.lower() == 'x-dropbox-metadata':
                 try:
                     metadata = json.loads(header_val)
@@ -1283,10 +1283,10 @@ class DropboxOAuth2FlowBase(object):
         Returns
             The path and parameters components of an API URL.
         """
-        if sys.version_info < (3,) and type(target) == unicode:
+        if sys.version_info < (3,) and type(target) == str:
             target = target.encode("utf8")
 
-        target_path = urllib.quote(target)
+        target_path = urllib.parse.quote(target)
 
         params = params or {}
         params = params.copy()
