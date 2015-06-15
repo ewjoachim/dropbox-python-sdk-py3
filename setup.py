@@ -38,7 +38,7 @@ with open('README.md') as f:
   readme = f.read()
 
 setup(name='dropbox-py3',
-      version='2.2.2',
+      version='2.2.3',
       description='Un-Official py3 fork of the Official Dropbox REST API Client',
       long_description=readme,
       author='Dropbox, Inc.',
