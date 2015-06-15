@@ -1,4 +1,4 @@
-include CHANGELOG.mdown conf.py index.rst LICENSE TESTING
+include CHANGELOG.mdown conf.py index.rst LICENSE TESTING README.md
 recursive-include dropbox *
 recursive-include tests *
 recursive-include testfiles *
