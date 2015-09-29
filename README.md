@@ -1,5 +1,13 @@
 [![PyPI version](https://badge.fury.io/py/dropbox-py3.svg)](http://badge.fury.io/py/dropbox-py3)
 
+DEPRECATED
+==========
+
+Dropbox published a [new package](https://github.com/dropbox/dropbox-sdk-python) that includes their new V2 SDK plus the old sdk (the one in this package) and **finally** accepted to have a github repo and accept issues and pull requests, so instead of this fork, you can now use the official Dropbox SDK wich, as of now, still has a V1 Py3 compatible module.
+
+Shop's closed. See you next project. The rest of the repo is left as-is.
+
+
 A note from the forker
 ======================
 
